@@ -9,11 +9,23 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var checkAmount = 0.0
-    //numPeople sets index row in the picker
+    //numPeople sets index row in the picker (2 -> 4 people)
     @State private var numPeople = 2
     @State private var tipPercent = 20
     
     let tipPercentages = [0, 5, 10, 15, 20, 25]
+    
+    //computed property
+    var totalPerPerson: Double{
+        //calculate total per person
+        let peopleCount = Double(numPeople + 2)
+        let tipSelection = Double(tipPercent)
+        
+        let tipVal = checkAmount * tipSelection/100
+        let grandTotal = checkAmount + tipVal
+        let amountPerPerson = grandTotal / peopleCount
+        return amountPerPerson
+    }
     
     var body: some View {
         NavigationView{
@@ -40,7 +52,9 @@ struct ContentView: View {
                     Text("Leave a tip")
                 }
                 Section{
-                    Text(checkAmount, format: .currency(code: Locale.current.currencyCode ?? "USD"))
+                    Text(totalPerPerson, format: .currency(code: Locale.current.currencyCode ?? "USD"))
+                } header: {
+                    Text("Total Per Person")
                 }
                 .navigationTitle("WeSplit")
             }
