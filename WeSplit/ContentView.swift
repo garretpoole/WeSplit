@@ -8,12 +8,12 @@
 import SwiftUI
 
 struct ContentView: View {
-    //allows data to be stored seperate from the View struct
-    //for simple properties stored locally in one view
-    @State private var tapCount = 0
+    @State private var name = ""
     var body: some View {
-        Button("Tap Count: \(tapCount)"){
-            tapCount += 1
+        Form{
+            //$ gives two way binding allows it to be written to
+            TextField("Enter your name", text: $name)
+            Text("Your name is \(name)")
         }
     }
 }
