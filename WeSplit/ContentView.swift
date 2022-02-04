@@ -8,18 +8,22 @@
 import SwiftUI
 
 struct ContentView: View {
-    let students = ["Harry", "Hermione", "Ron"]
-    @State private var student = "Harry"
+    @State private var checkAmount = 0.0
+    @State private var numPeople = 2
+    @State private var tipPercent = 20
+    
+    let tipPercentages = [0, 5, 10, 15, 20, 25]
     
     var body: some View {
-        NavigationView{
-            Form{
-                Picker("Select your student", selection:
-                    $student) {
-                    ForEach(students, id: \.self){
-                        Text($0)
-                    }
-                }
+        Form{
+            Section{
+                TextField("Amount", value: $checkAmount, format:
+                    //Locale is struct that gets area of user from iOS settings
+                    .currency(code: Locale.current.currencyCode ?? "USD"))
+                    .keyboardType(.decimalPad)
+            }
+            Section{
+                Text(checkAmount, format: .currency(code: Locale.current.currencyCode ?? "USD"))
             }
         }
     }
