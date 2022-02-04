@@ -8,12 +8,19 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var name = ""
+    let students = ["Harry", "Hermione", "Ron"]
+    @State private var student = "Harry"
+    
     var body: some View {
-        Form{
-            //$ gives two way binding allows it to be written to
-            TextField("Enter your name", text: $name)
-            Text("Your name is \(name)")
+        NavigationView{
+            Form{
+                Picker("Select your student", selection:
+                    $student) {
+                    ForEach(students, id: \.self){
+                        Text($0)
+                    }
+                }
+            }
         }
     }
 }
