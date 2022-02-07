@@ -11,29 +11,36 @@ struct ContentView: View {
     @State private var checkAmount = 0.0
     //numPeople sets index row in the picker (2 -> 4 people)
     @State private var numPeople = 2
-    @State private var tipPercent = 20
+    @State private var tipPercent = 15
     @FocusState private var amountFocused: Bool
-    let tipPercentages = [0, 5, 10, 15, 20, 25]
     
     //computed property
+    var grandTotal: Double{
+        let tipSelection = Double(tipPercent)
+        let tipVal = checkAmount * tipSelection/100
+        
+        return checkAmount + tipVal
+    }
     var totalPerPerson: Double{
         //calculate total per person
         let peopleCount = Double(numPeople + 2)
-        let tipSelection = Double(tipPercent)
-        
-        let tipVal = checkAmount * tipSelection/100
-        let grandTotal = checkAmount + tipVal
         let amountPerPerson = grandTotal / peopleCount
+        
         return amountPerPerson
+    }
+    
+    // new property with a special type; want it to work with Doubles.
+    var dollarFormat: FloatingPointFormatStyle<Double>.Currency{
+        //Locale is struct that gets area of user from iOS settings
+        let currencyCode = Locale.current.currencyCode ?? "USD"
+        return FloatingPointFormatStyle<Double>.Currency(code: currencyCode)
     }
     
     var body: some View {
         NavigationView{
             Form{
                 Section{
-                    TextField("Amount", value: $checkAmount, format:
-                        //Locale is struct that gets area of user from iOS settings
-                        .currency(code: Locale.current.currencyCode ?? "USD"))
+                    TextField("Amount", value: $checkAmount, format: dollarFormat)
                         .keyboardType(.decimalPad)
                         .focused($amountFocused)
                     Picker("Number of People", selection: $numPeople){
@@ -44,29 +51,36 @@ struct ContentView: View {
                 }
                 Section{
                     Picker("Tip Percentage", selection: $tipPercent) {
-                        ForEach(tipPercentages, id: \.self){
-                            Text($0, format: .percent)
+                        ForEach(0..<101){
+                            Text("\($0)%")
                         }
                     }
-                    .pickerStyle(.segmented)
                 } header: {
                     Text("Leave a tip")
                 }
                 Section{
-                    Text(totalPerPerson, format: .currency(code: Locale.current.currencyCode ?? "USD"))
+                    Text(grandTotal, format: dollarFormat)
+                } header: {
+                    Text("Total")
                 }
-                .navigationTitle("WeSplit")
-                //lets specify toolbar items for a group
-                .toolbar {
-                    //blace buttons for toolbar
-                    ToolbarItemGroup(placement: .keyboard){
-                        Spacer()
-                        Button("Done") {
-                            amountFocused = false
-                        }
+                Section{
+                    Text(totalPerPerson, format: dollarFormat)
+                } header: {
+                    Text("Amount per person")
+                }
+            }
+            .navigationTitle("WeSplit")
+            //lets specify toolbar items for a group
+            .toolbar {
+                //blace buttons for toolbar
+                ToolbarItemGroup(placement: .keyboard){
+                    Spacer()
+                    Button("Done") {
+                        amountFocused = false
                     }
                 }
             }
+            
         }
     }
 }
